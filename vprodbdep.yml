@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: vprodb
-        image: lovarajukandala/vprofiledb:latest
+        image: vprofile/vprofiledb:V1
         args:
          - "--ignore-db-dir=lost+found"
         volumeMounts:
@@ -29,14 +29,14 @@ spec:
          - name: MYSQL_ROOT_PASSWORD
            valueFrom:
              secretKeyRef:
-               name: appsecret
-               key: db_pass
+               name: app-secret
+               key: db-pass
       nodeSelector:
-        zone: us-east-1a
+        zone: us-east-2b
       volumes:
         - name: vpro-db-data
           # This AWS EBS volume must already exist.
           awsElasticBlockStore:
-             volumeID: vol-03b440408c6dbf5f6
+             volumeID: vol-0cf3d659eba6861d4
              fsType: ext4
 
