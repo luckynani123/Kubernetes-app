@@ -1,14 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata: 
-  name: db-deploy
+metadata:
+  name: vprodb
+  labels:
+    app: vprodb
 spec:
-  replica: 1
   selector:
-    matchlabels: 
+    matchLabels:
       app: vprodb
+  replicas: 1
   template:
-    metadata: 
+    metadata:
       labels:
         app: vprodb
     spec:
@@ -16,24 +18,25 @@ spec:
       - name: vprodb
         image: lovarajukandala/vprofiledb:latest
         args:
-        - "--ignore-db-dir=lost+found"
+         - "--ignore-db-dir=lost+found"
         volumeMounts:
         - mountPath: /var/lib/mysql
           name: vpro-db-data
         ports:
         - name: vprodb-port
           containerPort: 3306
-
         env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: appsecret
-              key: db_pass
+         - name: MYSQL_ROOT_PASSWORD
+           valueFrom:
+             secretKeyRef:
+               name: appsecret
+               key: db_pass
       nodeSelector:
         zone: us-east-1a
       volumes:
-      - name: vpro-db-data
-        awsElasticBlockStore:
-          volumeID: vol-03b440408c6dbf5f6
-          fsType: ext4
+        - name: vpro-db-data
+          # This AWS EBS volume must already exist.
+          awsElasticBlockStore:
+             volumeID: vol-03b440408c6dbf5f6
+             fsType: ext4
+
